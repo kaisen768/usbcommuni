@@ -1,0 +1,3 @@
+[submodule "3rdparty/cclqueue"]
+	path = 3rdparty/cclqueue
+	url = https://kgithub.com/kaisen768/cclqueue.git
