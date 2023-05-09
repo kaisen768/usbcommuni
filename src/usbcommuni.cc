@@ -20,8 +20,10 @@ USBCommuniErrors_t USBCommuni::Init()
     USBCommuniEventCb android_subscribe_cb = [this](USBCommuniEventTypes_t event){AndroidSubscribeHandler(event);};
 
     ios_.Init();
+    android_.Init();
 
     ios_.SubscribeRegister(ios_subscribe_cb);
+    android_.SubscribeRegister(android_subscribe_cb);
 
     loop_thread_ = std::thread(&USBCommuni::LoopHandler, this);
     loop_thread_.detach();
@@ -33,7 +35,7 @@ bool USBCommuni::GetConnectStatus()
 {
     switch (type_) {
     case USBCOMMUNI_DEVICE_TYPE_ANDROID:
-        // return android.GetConnectStatus();
+        return android_.GetConnectStatus();
     
     case USBCOMMUNI_DEVICE_TYPE_IOS:
         return ios_.GetConnectStatus();
@@ -48,17 +50,16 @@ void USBCommuni::RecvHandleRegister(USBCommuniRecvHandleCb recvcb)
     recvhandle_ = recvcb;
 
     ios_.RecvHandleRegister(recvhandle_);
+    android_.RecvHandleRegister(recvhandle_);
 }
 
 USBCommuniErrors_t USBCommuni::SendData(const char *data, uint32_t len, uint32_t &send_bytes)
 {
     USBCommuniErrors_t err = USBCOMMUNI_E_NOT_CONN;
 
-    fprintf(stderr, "%s\n", __FUNCTION__);
-
     switch (type_) {
     case USBCOMMUNI_DEVICE_TYPE_ANDROID:
-        // err = android.SendData(data, len, send_bytes);
+        err = android_.SendData(data, len, send_bytes);
         break;
     
     case USBCOMMUNI_DEVICE_TYPE_IOS:
@@ -106,13 +107,13 @@ void USBCommuni::LoopHandler()
             doonce = false;
             count = 0;
             ios_.HotplugEventRegister();
-            // android.HotplugEventRegister();
+            android_.HotplugEventRegister();
         }
 
         switch (ios_actions_) {
         case USBCOMMUNI_IOS_ACTION_ARRIVED:
             ios_actions_ = USBCOMMUNI_IOS_ACTION_IDLE;
-            // android.HotplugEventDisregister();
+            android_.HotplugEventDisregister();
             fprintf(stderr, "USBCOMMUNI_IOS_ACTION_ARRIVED\n");
             break;
 

@@ -4,12 +4,12 @@
 
 int main(int argc, char const *argv[])
 {
-    std::cout << "USB Communication Module example 1.0.0" << std::endl;
+    std::cout << "USB Communication Module example 1.0.1" << std::endl;
 
     usbcommuni::USBCommuniErrors_t err;
 
     usbcommuni::USBCommuniRecvHandleCb recver = [](const char *data, uint32_t length) {
-                                            fprintf(stderr, "[USB IOS][RECV][%d]: %s\n", length, data);
+                                            fprintf(stderr, "[USB][RECV][%d]: %s\n", length, data);
                                         };
 
     usbcommuni::USBCommuni usbm;
@@ -28,7 +28,6 @@ int main(int argc, char const *argv[])
             fprintf(stderr, "USB Device connect status : %d\n", connect_status);
         }
 
-#if 1
         if (usbm.GetConnectStatus()) {
             char data[256] = {0};
             uint32_t len;
@@ -38,7 +37,6 @@ int main(int argc, char const *argv[])
             err = usbm.SendData(data, len, send_bytes);
             fprintf(stderr, "SendData err:%d, send_bytes:%d\n", err, send_bytes);
         }
-#endif
     }
 
     return 0;

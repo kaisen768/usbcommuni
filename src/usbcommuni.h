@@ -3,6 +3,7 @@
 
 #include <thread>
 #include "commondef.h"
+#include "android/android_usb_communi.h"
 #include "ios/ios_usb_communi.h"
 
 namespace usbcommuni {
@@ -27,6 +28,7 @@ private:
     void LoopHandler();
 
 private:
+    USBAndroidCommuni android_;
     USBIosCommuni ios_;
     USBCommuniDeviceTypes_t type_;
     USBCommuniRecvHandleCb recvhandle_;
